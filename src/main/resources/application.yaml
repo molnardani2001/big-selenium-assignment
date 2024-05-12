@@ -1,2 +1,12 @@
 selenium:
   host: 'http://selenium:4444/wd/hub'
+
+user:
+  email: 'ihn8hy@inf.elte.hu'
+  password: 'TestPassw0rd123!'
+
+protocol: "http"
+domain: 'www.konzolvilag.hu'
+pages:
+  mainPage: '/'
+  loginPage: '/bejelentkezes'

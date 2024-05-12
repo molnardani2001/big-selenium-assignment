@@ -6,7 +6,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./tests:/home/selenium/tests
+      - ~/uni/second/sqat/selenium/big-selenium-assignment:/home/selenium/tests/selenium_test_big
     links:
       - selenium
       - novnc
