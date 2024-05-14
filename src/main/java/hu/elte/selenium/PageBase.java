@@ -12,6 +12,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public abstract class PageBase {
@@ -19,6 +21,9 @@ public abstract class PageBase {
     protected WebDriverWait wait;
     protected By bodyLocator = By.tagName("body");
 
+    protected final By acceptPoputLocator = By.cssSelector("[data-cky-tag='accept-button']");
+
+    protected final By mainPageLogoLocator = By.xpath("//span[@id='logo_img']");
     public PageBase(WebDriver driver, WebDriverWait wait) {
         this.driver = driver;
         this.wait = wait;
@@ -29,20 +34,36 @@ public abstract class PageBase {
         return this.driver.findElement(locator);
     }
 
-    public String getDomain() {
-        return ConfigurationReader.readValue("protocol", String.class)
-                + "://"
-                + ConfigurationReader.readValue("domain", String.class);
+    public void exitPopupIfPresent() {
+        WebDriverWait oldWait = wait;
+        WebDriverWait newWait = new WebDriverWait(driver, 3);
+        this.wait = newWait;
+
+        WebElement proceedHungarianButton = waitAndReturnWebElement(acceptPoputLocator);
+        proceedHungarianButton.click();
+
+        this.wait = oldWait;
     }
 
-    public abstract String getSpecificDomain();
+    public MainPage returnToMainPage() {
+        WebElement mainPageLogo = waitAndReturnWebElement(mainPageLogoLocator);
+        mainPageLogo.click();
 
-    protected void clickRandom() {
-        int width = driver.manage().window().getSize().getWidth();
-        int height = driver.manage().window().getSize().getHeight();
+        return new MainPage(driver, wait);
+    }
 
-        Random random = new Random();
-        Actions actions = new Actions(driver);
-        actions.moveByOffset(random.nextInt(width), random.nextInt(height)).click().build().perform();
+    public List<String> getLiNamesFromUl(WebElement element) {
+        List<String> menuItemNames = new ArrayList<>();
+        List<WebElement> listItems = element.findElements(By.tagName("li"));
+
+        for(WebElement item : listItems) {
+            menuItemNames.add(item.findElement(By.tagName("a")).getText());
+        }
+
+        return menuItemNames;
+    }
+
+    public String getTitle() {
+        return this.driver.getTitle();
     }
 }

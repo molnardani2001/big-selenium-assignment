@@ -7,17 +7,16 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LoginPage extends PageBase {
-    private final By emailInputLocator = By.xpath("//input[@type='email' and @name='user_name_or_email']");
-    private final By passwordInputLocator = By.xpath("//input[@type='password' and @name='user_password']");
-    private final By loginButtonLocator = By.xpath("//input[@type='submit' and @name='frontend_login_submit']");
+    private final By emailInputLocator = By.xpath("//input[@type='text' and @id='email' and @name = 'email']");
+    private final By passwordInputLocator = By.xpath("//input[@type='password' and @id='password' and @name = 'password']");
+    private final By loginButtonLocator = By.xpath("//button[@type='submit' and @name='login']");
 
     public LoginPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
         waitAndReturnWebElement(bodyLocator);
     }
 
-    public MainPage loginWithCredentials(String email, String password) {
-        this.driver.get(getSpecificDomain());
+    public MyAccountPage loginWithCredentials(String email, String password) {
         WebElement emailInput = waitAndReturnWebElement(emailInputLocator);
         emailInput.sendKeys(email);
 
@@ -27,20 +26,11 @@ public class LoginPage extends PageBase {
         WebElement loginButton = waitAndReturnWebElement(loginButtonLocator);
         loginButton.click();
 
-        clickRandom();
-
-        return new MainPage(driver, wait);
+        return new MyAccountPage(driver, wait);
     }
 
-    public MainPage login() {
+    public MyAccountPage login() {
         return loginWithCredentials(ConfigurationReader.readValue("user.email", String.class),
                 ConfigurationReader.readValue("user.password", String.class));
-    }
-
-    @Override
-    public String getSpecificDomain() {
-        return
-                getDomain()
-                + ConfigurationReader.readValue("pages.loginPage", String.class);
     }
 }

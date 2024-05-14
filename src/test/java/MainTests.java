@@ -1,6 +1,8 @@
 import hu.elte.config.ConfigurationReader;
 import hu.elte.selenium.LoginPage;
 import hu.elte.selenium.MainPage;
+import hu.elte.selenium.MyAccountPage;
+import hu.elte.selenium.SearchResultPage;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,12 +10,16 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MainTests {
     private WebDriver driver;
@@ -21,45 +27,71 @@ public class MainTests {
 
     private LoginPage loginPage;
     private MainPage mainPage;
+    private MyAccountPage myAccountPage;
+    private SearchResultPage searchResultPage;
     @Before
     public void setUp() throws MalformedURLException {
+        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--lang=hu");
         options.addArguments("--charset=UTF-8");
+        options.addArguments("--window-size=1920,1080");
         options.addArguments("--no-sandbox");
-        driver = new RemoteWebDriver(new URL(ConfigurationReader.readValue("selenium.host", String.class)), options);
+        options.setExperimentalOption("excludeSwitches", new String[] { "disable-popup-blocking" });
+        driver = new ChromeDriver(options);
         driver.manage().window().maximize();
 
         wait = new WebDriverWait(driver, 10);
 
         mainPage = new MainPage(driver, wait);
-        loginPage = new LoginPage(driver, wait);
     }
+
     @Test
     public void testSuccessfulLoginAndLogout() {
-        mainPage = loginPage.login();
+        login();
+        Assert.assertTrue(ConfigurationReader.readValue("tests.greeting",String.class)
+                .equalsIgnoreCase(myAccountPage.getGreeting()));
 
-        By greetingLocator = By.xpath("//*[@id=\"header\"]/div[2]/ul/li[5]");
-        WebElement greeting = loginPage.waitAndReturnWebElement(greetingLocator);
+        List<String> assertMenuItems = ConfigurationReader.readValue("tests.myAccountMenuItems", List.class);
 
-        Assert.assertTrue(greeting.getText().endsWith("kedves Molnar Daniel!"));
+        Assert.assertEquals(assertMenuItems, myAccountPage.getMenuPoints());
 
-        mainPage.logout();
-
-        greeting = loginPage.waitAndReturnWebElement(greetingLocator);
-        Assert.assertFalse(greeting.getText().endsWith("kedves Molnar Daniel!"));
+        mainPage = myAccountPage.logout();
+        Assert.assertEquals(ConfigurationReader.readValue("tests.mainPageTitle", String.class), mainPage.getTitle());
     }
 
     @Test
-    public void testHoverAndNavigate() {
-        mainPage.navigateToPlaystation5Page();
+    public void hoverTest() {
+        login();
+        mainPage = loginPage.returnToMainPage();
 
-        By h1Locator = By.tagName("h1");
-        WebElement h1 = mainPage.waitAndReturnWebElement(h1Locator);
-
-        System.out.println(h1.getText());
+        List<String> assertMenuItems = ConfigurationReader.readValue("tests.mainPageMenuItems", List.class);
+        Assert.assertEquals(assertMenuItems, mainPage.hoverMyAccountAndGetMenuItems());
     }
 
+    @Test
+    public void searchTest() {
+        this.driver.get(getFullURL());
+        mainPage.exitPopupIfPresent();
+        searchResultPage = mainPage.search(ConfigurationReader.readValue("search.product",String.class));
+
+    }
+
+    private void login() {
+        this.driver.get(getFullURL());
+        loginPage = mainPage.clickLogin();
+
+        myAccountPage = loginPage.login();
+    }
+
+    private String getFullURL() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ConfigurationReader.readValue("protocol", String.class));
+        sb.append("://");
+        sb.append(ConfigurationReader.readValue("domain", String.class));
+
+        return sb.toString();
+    }
     @After
     public void tearDown() {
         if(this.driver != null) {

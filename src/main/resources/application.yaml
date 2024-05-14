@@ -1,12 +1,15 @@
-selenium:
-  host: 'http://selenium:4444/wd/hub'
-
 user:
   email: 'ihn8hy@inf.elte.hu'
   password: 'TestPassw0rd123!'
 
-protocol: "http"
-domain: 'www.konzolvilag.hu'
-pages:
-  mainPage: '/'
-  loginPage: '/bejelentkezes'
+protocol: "https"
+domain: 'www.notebook.hu'
+
+search:
+  product: 'apple iPhone 15 pro'
+
+tests:
+  greeting: 'Üdvözlünk, Dániel Molnár!'
+  myAccountMenuItems: ['Fiók áttekintő', 'Személyes adatok', 'Rendeléseim', 'Letölthető termékek', 'Termék vélemények', 'Kedvenceim', 'E-számlák', 'Kilépés']
+  mainPageMenuItems: ['Fiók áttekintő', 'Személyes adatok', 'Kedvencek', 'Rendeléseim', 'Letölthető termékek', 'Termék vélemények', 'Kilépés']
+  mainPageTitle: 'Notebook.hu :: A Laptop szakértő :: Online hitel, akár 0%THM'
