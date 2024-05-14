@@ -1,8 +1,5 @@
 import hu.elte.config.ConfigurationReader;
-import hu.elte.selenium.LoginPage;
-import hu.elte.selenium.MainPage;
-import hu.elte.selenium.MyAccountPage;
-import hu.elte.selenium.SearchResultPage;
+import hu.elte.selenium.*;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,6 +26,7 @@ public class MainTests {
     private MainPage mainPage;
     private MyAccountPage myAccountPage;
     private SearchResultPage searchResultPage;
+    private StoresPage storesPage;
     @Before
     public void setUp() throws MalformedURLException {
         System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
@@ -70,11 +68,50 @@ public class MainTests {
     }
 
     @Test
-    public void searchTest() {
+    public void searchTest() throws InterruptedException {
         this.driver.get(getFullURL());
         mainPage.exitPopupIfPresent();
         searchResultPage = mainPage.search(ConfigurationReader.readValue("search.product",String.class));
+        searchResultPage.checkAllExtras();
 
+        Thread.sleep(2000);
+    }
+
+    @Test
+    public void staticPageLoadedTest() {
+        this.driver.get(getFullURL());
+        mainPage.exitPopupIfPresent();
+
+        storesPage = mainPage.openStoresPage();
+
+        Assert.assertEquals(ConfigurationReader.readValue("tests.storesPageTitle", String.class) ,storesPage.getTitle());
+    }
+
+    @Test
+    public void staticPagesFromArrayTest() {
+        login();
+
+        List<String> pages = ConfigurationReader.readValue("staticPagesToOpen",List.class);
+        List<String> pageUrls = myAccountPage.openAndGetStaticPagesURL(pages);
+
+        String prefix = ConfigurationReader.readValue("myAccountPrefix",String.class);
+        pages = pages.stream().map(p -> prefix + p).toList();
+
+        Assert.assertEquals(pages, pageUrls);
+    }
+
+    @Test
+    public void changePasswordFormSendingwithUser() {
+        login();
+        String oldPassword = ConfigurationReader.readValue("user.password", String.class);
+        String newPassword = ConfigurationReader.readValue("user.newPassword", String.class);
+        myAccountPage.changePassword(newPassword);
+
+        String sysMsg = ConfigurationReader.readValue("tests.successfullPwChangeMsg", String.class);
+        Assert.assertTrue(sysMsg.equalsIgnoreCase(myAccountPage.getSystemMessage()));
+
+        myAccountPage.changePassword(oldPassword);
+        Assert.assertTrue(sysMsg.equalsIgnoreCase(myAccountPage.getSystemMessage()));
     }
 
     private void login() {

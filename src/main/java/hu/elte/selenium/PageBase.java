@@ -36,7 +36,7 @@ public abstract class PageBase {
 
     public void exitPopupIfPresent() {
         WebDriverWait oldWait = wait;
-        WebDriverWait newWait = new WebDriverWait(driver, 3);
+        WebDriverWait newWait = new WebDriverWait(driver, 5);
         this.wait = newWait;
 
         WebElement proceedHungarianButton = waitAndReturnWebElement(acceptPoputLocator);
@@ -65,5 +65,9 @@ public abstract class PageBase {
 
     public String getTitle() {
         return this.driver.getTitle();
+    }
+
+    public String getUrl() {
+        return this.driver.getCurrentUrl();
     }
 }

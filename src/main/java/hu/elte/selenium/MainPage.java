@@ -20,6 +20,7 @@ public class MainPage extends PageBase {
 
     private final By searchBarLocator = By.xpath("//input[@type = 'text' and @class = 'form-control mr-sm-2 tf_key prefixbox-autocomplete-input-desktop']");
 
+    private final By storesLocator = By.xpath("//div[@id='top_links']/span/a[@href = \"https://www.notebook.hu/szakuzleteink\"]");
     public MainPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -55,5 +56,12 @@ public class MainPage extends PageBase {
         searchBar.sendKeys(Keys.ENTER);
 
         return new SearchResultPage(driver, wait);
+    }
+
+    public StoresPage openStoresPage() {
+        WebElement storesButton = waitAndReturnWebElement(storesLocator);
+        storesButton.click();
+
+        return new StoresPage(driver, wait);
     }
 }
