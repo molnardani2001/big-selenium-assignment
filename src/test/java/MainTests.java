@@ -1,5 +1,6 @@
 import hu.elte.config.ConfigurationReader;
 import hu.elte.selenium.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,12 +22,13 @@ import java.util.List;
 public class MainTests {
     private WebDriver driver;
     private WebDriverWait wait;
-
     private LoginPage loginPage;
     private MainPage mainPage;
     private MyAccountPage myAccountPage;
     private SearchResultPage searchResultPage;
     private StoresPage storesPage;
+    private ProductPage productPage;
+    private ServicePage servicePage;
     @Before
     public void setUp() throws MalformedURLException {
         System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
@@ -68,13 +70,15 @@ public class MainTests {
     }
 
     @Test
-    public void searchTest() throws InterruptedException {
+    public void searchAndCheckboxTest() {
         this.driver.get(getFullURL());
         mainPage.exitPopupIfPresent();
         searchResultPage = mainPage.search(ConfigurationReader.readValue("search.product",String.class));
-        searchResultPage.checkAllExtras();
+        searchResultPage = searchResultPage.checkAllExtras();
 
-        Thread.sleep(2000);
+        List<Boolean> checkBoxValues = searchResultPage.readExtrasCheckboxValues();
+        Assert.assertEquals(8, checkBoxValues.size());
+        checkBoxValues.forEach(Assert::assertTrue);
     }
 
     @Test
@@ -112,6 +116,32 @@ public class MainTests {
 
         myAccountPage.changePassword(oldPassword);
         Assert.assertTrue(sysMsg.equalsIgnoreCase(myAccountPage.getSystemMessage()));
+    }
+
+    @Test
+    public void readDropDownInputValue(){
+        this.driver.get(getFullURL());
+        mainPage.exitPopupIfPresent();
+        searchResultPage = mainPage.search(ConfigurationReader.readValue("search.notebook",String.class));
+        productPage = searchResultPage.openAsusZenbookProductPage();
+        Pair<String, String> nameAndPrice = productPage.readDropDownValues();
+
+        String name = ConfigurationReader.readValue("tests.dropDownValueName", String.class);
+        String price = ConfigurationReader.readValue("tests.dropDownValuePrice", String.class);
+        Assert.assertEquals(name, nameAndPrice.getKey());
+        Assert.assertTrue(nameAndPrice.getValue().startsWith(price));
+    }
+
+    @Test
+    public void javascriptExecutorTest() throws InterruptedException {
+        this.driver.get(getFullURL());
+        mainPage.exitPopupIfPresent();
+        servicePage = mainPage.openServicePage();
+
+        String message = ConfigurationReader.readValue("tests.alertMessage", String.class);
+        String alertedMessage = servicePage.alertUser(message);
+
+        Assert.assertEquals(message, alertedMessage);
     }
 
     private void login() {

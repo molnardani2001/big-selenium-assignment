@@ -9,6 +9,7 @@ myAccountPrefix: 'https://www.notebook.hu/ugyfelkapu/'
 
 search:
   product: 'apple iPhone 15 pro'
+  notebook: 'ASUS ZenBook 14 OLED UM3402'
 
 staticPagesToOpen:
   - 'fiokom'
@@ -40,3 +41,6 @@ tests:
   mainPageTitle: 'Notebook.hu :: A Laptop szakértő :: Online hitel, akár 0%THM'
   storesPageTitle: 'Üzleteink - Notebook.hu :: A Laptop szakértő :: Online hitel, akár 0%THM'
   successfullPwChangeMsg: 'Sikeres mentés!'
+  dropDownValueName: 'Kingston SNV2S/1000G 1000 GB M.2 2280 PCIe 4.0 NVMe Belső SSD'
+  dropDownValuePrice: '+ 23 742 Ft'
+  alertMessage: 'Elromlott a kis laptopod? Szereld meg nálunk! HEHE'

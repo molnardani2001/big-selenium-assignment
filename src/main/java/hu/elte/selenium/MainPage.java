@@ -21,6 +21,7 @@ public class MainPage extends PageBase {
     private final By searchBarLocator = By.xpath("//input[@type = 'text' and @class = 'form-control mr-sm-2 tf_key prefixbox-autocomplete-input-desktop']");
 
     private final By storesLocator = By.xpath("//div[@id='top_links']/span/a[@href = \"https://www.notebook.hu/szakuzleteink\"]");
+    private final By serviceLocator = By.xpath("//div[@id='top_links']/span/a[@href = \"https://www.notebook.hu/szerviz\"]");
     public MainPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -63,5 +64,12 @@ public class MainPage extends PageBase {
         storesButton.click();
 
         return new StoresPage(driver, wait);
+    }
+
+    public ServicePage openServicePage() {
+        WebElement serviceButton = waitAndReturnWebElement(serviceLocator);
+        serviceButton.click();
+
+        return new ServicePage(driver, wait);
     }
 }
