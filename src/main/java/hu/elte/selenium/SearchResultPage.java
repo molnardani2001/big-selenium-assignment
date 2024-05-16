@@ -13,11 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SearchResultPage extends PageBase {
-
     private final By extrasLocator = By.xpath("//div[@class = 'extras_tel_tab prefixbox-filter-container prefixbox-filter-count-8 ']");
-
     private final By extrasCheckboxesLocator = By.xpath("//div[@class='extras_tel_tab prefixbox-filter-container prefixbox-filter-count-8 prefixbox-open']//input[@type = 'checkbox']");
-
     private final By notebookProductLocator = By.xpath("//a[@href= 'https://www.notebook.hu/asus-zenbook-14-oled-um3402-um3402ya-km226-348395']");
     public SearchResultPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);

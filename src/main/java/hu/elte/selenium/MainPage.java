@@ -13,13 +13,9 @@ import java.util.List;
 
 public class MainPage extends PageBase {
     private final By myAccountLocator = By.xpath("//a[@id='user_menu_account' and @href='https://www.notebook.hu/ugyfelkapu/fiokom']");
-
     private final By loginLocator = By.xpath("//a[@href='https://www.notebook.hu/ugyfelkapu/bejelentkezes']");
-
     private final By menuItemsLocator = By.xpath("//div[@class='user-menu menu']/ul");
-
     private final By searchBarLocator = By.xpath("//input[@type = 'text' and @class = 'form-control mr-sm-2 tf_key prefixbox-autocomplete-input-desktop']");
-
     private final By storesLocator = By.xpath("//div[@id='top_links']/span/a[@href = \"https://www.notebook.hu/szakuzleteink\"]");
     private final By serviceLocator = By.xpath("//div[@id='top_links']/span/a[@href = \"https://www.notebook.hu/szerviz\"]");
     public MainPage(WebDriver driver, WebDriverWait wait) {
@@ -37,8 +33,6 @@ public class MainPage extends PageBase {
     }
 
     public List<String> hoverMyAccountAndGetMenuItems() {
-        List<String> menuItemNames = new ArrayList<>();
-
         hoverMyAccount();
         WebElement menu = waitAndReturnWebElement(menuItemsLocator);
         return getLiNamesFromUl(menu);

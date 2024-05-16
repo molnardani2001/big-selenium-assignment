@@ -30,7 +30,8 @@ public class LoginPage extends PageBase {
     }
 
     public MyAccountPage login() {
-        return loginWithCredentials(ConfigurationReader.readValue("user.email", String.class),
-                ConfigurationReader.readValue("user.password", String.class));
+        String username = ConfigurationReader.readValue("user.email", String.class);
+        String password = ConfigurationReader.readValue("user.password", String.class);
+        return loginWithCredentials(username,password);
     }
 }
